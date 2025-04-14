@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SoundFont Piano Test</title>
+</head>
+<body>
+  <h1>Click to play C major chord</h1>
+  <button id="play">Play C chord</button>
+  <p id="status">Loading piano...</p>
+
+  <script src="https://unpkg.com/soundfont-player@0.15.7/dist/soundfont-player.js"></script>
+  <script>
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ac = new AudioContext();
+    let piano = null;
+
+    document.body.addEventListener('click', () => {
+      if (ac.state === "suspended") {
+        ac.resume();
+      }
+    }, { once: true });
+
+    Soundfont.instrument(ac, 'acoustic_grand_piano').then(p => {
+      piano = p;
+      document.getElementById("status").innerText = "Piano ready!";
+    });
+
+    document.getElementById("play").addEventListener("click", () => {
+      if (!piano) {
+        alert("Piano not ready yet!");
+        return;
+      }
+
+      // Play C major: C4 E4 G4
+      piano.play('C4');
+      piano.play('E4', ac.currentTime + 0.05);
+      piano.play('G4', ac.currentTime + 0.1);
+    });
+  </script>
+</body>
+</html>
